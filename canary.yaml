@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: qi-canary
+  namespace: qi
+spec:
+  selector:
+    matchLabels:
+      app: qi
+      version: yellow
+  replicas: 1 # Number of replicas that will be created for this deployment
+  template:
+    metadata:
+      labels:
+        app: qi
+        version: yellow
+    spec:
+      containers:
+        - name: qi
+          image: kanalavinodkumar/rollout:yellow # Image that will be used to containers in the cluster
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80 # The port that the container is running on in the cluster
+---
