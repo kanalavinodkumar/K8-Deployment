@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: qi
+  namespace: qi
+spec:
+  selector:
+    matchLabels:
+      app: qi
+      version: blue
+  replicas: 5 # Number of replicas that will be created for this deployment
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: qi
+        version: blue
+    spec:
+      containers:
+        - name: qi
+          image: kanalavinodkumar/rollout:blue # Image that will be used to containers in the cluster
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80 # The port that the container is running on in the cluster
+---
+kind: Service
+apiVersion: v1
+metadata: # Metadata of the resource kind we are creating
+  name: qi
+  namespace: qi
+spec:
+  selector:
+    app: qi
+    version: blue
+  type: NodePort
+  ports:
+  - name: http-port
+    protocol: TCP
+    # service-port
+    port: 80
+    # pod-port
+    targetPort: 80
